@@ -1,11 +1,7 @@
-`check_prometheus_metric`
-=========================
-![CI](https://github.com/magenta-aps/check_prometheus_metric/workflows/CI/badge.svg)
+function usage() {
 
-Nagios plugin for alerting on Prometheus query results.
+  cat <<'EoL'
 
-# Usage
-```
   check_prometheus_metric.sh - Nagios plugin for checking Prometheus metrics.
   
   Usage:
@@ -39,27 +35,6 @@ Nagios plugin for alerting on Prometheus query results.
 
   Dependencies:
     Requires bash, command, curl, cut, echo, grep, jq and sed to be in $PATH.
-```
-Note: `nagios-interval` refers to [this syntax](http://nagios-plugins.org/doc/guidelines.html#THRESHOLDFORMAT)
 
-# Nagios configuration
-You need to add the following commands to your Nagios configuration to use it:
-```
-define command {
-    command_name check_prometheus
-    command_line $USER1$/check_prometheus_metric.sh -H '$ARG1$' -q '$ARG2$' -w '$ARG3$' -c '$ARG4$' -n '$ARG5$' -m '$ARG6$'
+EoL
 }
-
-# check_prometheus, treating a NaN result as ok
-define command {
-    command_name check_prometheus_nan_ok
-    command_line $USER1$/check_prometheus_metric.sh -H '$ARG1$' -q '$ARG2$' -w '$ARG3$' -c '$ARG4$' -n '$ARG5$' -m '$ARG6$' -O
-}
-
-# check_prometheus, the first element of the vector is used for the check,
-# printing the extra metric information into the Nagios message
-define command {
-    command_name check_prometheus_extra_info
-    command_line $USER1$/check_prometheus_metric.sh -H '$ARG1$' -q '$ARG2$' -w '$ARG3$' -c '$ARG4$' -n '$ARG5$' -m '$ARG6$' -i -t vector
-}
-```
