@@ -1,3 +1,5 @@
+<img align="right" src="https://user-images.githubusercontent.com/225151/75162092-3ef2f780-571d-11ea-8d4e-616ccbd1c924.png" width="200" height="200"/>
+
 `check_prometheus_metric`
 =========================
 ![CI](https://github.com/magenta-aps/check_prometheus_metric/workflows/CI/badge.svg)
