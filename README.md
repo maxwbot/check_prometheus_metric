@@ -42,6 +42,54 @@ Nagios plugin for alerting on Prometheus query results.
 ```
 Note: `nagios-interval` refers to [this syntax](http://nagios-plugins.org/doc/guidelines.html#THRESHOLDFORMAT)
 
+# Icinga configuration
+You need to add the following to your Icinga2 configuration to use it:
+```
+object CheckCommand "check_prometheus_metric" {
+  import "plugin-check-command"
+  command = [ "/usr/lib/nagios/plugins/check_prometheus_metric" ]
+
+  arguments = {
+        "-H" = {
+                value = "$check_prometheus_metric_url$"
+                description = "URL of Prometheus host to query."
+        }
+        "-q" = {
+                value = "$check_prometheus_metric_query$"
+                description = "Prometheus query, that returns a float."
+        }
+        "-w" = {
+                value = "$check_prometheus_metric_warning$"
+                description = "Warning level value (float or nagios-interval)."
+        }
+        "-c" = {
+                value = "$check_prometheus_metric_critical$"
+                description = "Critical level value (float or nagios-interval)."
+        }
+        "-n" = {
+                value = "$check_prometheus_metric_name$"
+                description = "A name for the mtric being checked."
+        }
+    }
+}
+
+apply Service "pi" {
+  import "generic-service"
+
+  check_command = "check_prometheus_metric"
+
+  vars.check_prometheus_metric_url = "nagios_plugins_prometheus:9090"
+  vars.check_prometheus_metric_query = "pi"
+  vars.check_prometheus_metric_warning = "3:4"
+  vars.check_prometheus_metric_critical = "1:6"
+  vars.check_prometheus_metric_name = "pi"
+  
+  command_endpoint = host.vars.client_endpoint
+  assign where host.name == NodeName
+}
+```
+And add the script to `/usr/lib/nagios/plugins/check_prometheus_metric`.
+
 # Nagios configuration
 You need to add the following commands to your Nagios configuration to use it:
 ```

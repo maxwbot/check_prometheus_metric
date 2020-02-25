@@ -181,6 +181,27 @@ function process_command_line {
 }
 
 
+function check_prometheus_server {
+    # Check that the server URL responds
+    curl --silent --head ${PROMETHEUS_SERVER}/api/v1/query > /dev/null
+    SERVER_RESPONDED=$?
+    if [ "${SERVER_RESPONDED}" -ne 0 ]; then
+        NAGIOS_STATUS=UNKNOWN
+        NAGIOS_SHORT_TEXT="no response from prometheus"
+        exit
+    fi
+
+    # Check if the prometheus endpoint exists, and can be queried
+    curl -s ${PROMETHEUS_SERVER}/api/v1/query?query=cafebabe | jq -e '.status == "success"' 1>/dev/null 2>/dev/null
+    PROMETHEUS_OK=$?
+    if [ "${PROMETHEUS_OK}" -ne 0 ]; then
+        NAGIOS_STATUS=UNKNOWN
+        NAGIOS_SHORT_TEXT="unable to query proemtheus endpoint!"
+        exit
+    fi
+}
+
+
 function get_prometheus_raw_result {
 
   local _RESULT
@@ -247,6 +268,9 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     # process the cli options
     process_command_line "$@"
 
+    # Check that we can communicate with the prometheus server
+    check_prometheus_server
+
     # get the raw query from prometheus
     PROMETHEUS_RAW_RESPONSE="$( get_prometheus_raw_result )"
 
@@ -268,14 +292,14 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
       JSON=$(echo "${LEVEL_JSON} {\"value\": ${PROMETHEUS_RESULT}}" | jq -s add)
       # Evaluate critical and warning levels
       echo "${JSON}" | jq -e ".critical_low <= .value and .value <= .critical_high" >/dev/null
-      CRITICAL=$?
+      IS_CRITICAL=$?
       echo "${JSON}" | jq -e ".warning_low <= .value and .value <= .warning_high" >/dev/null
-      WARNING=$?
+      IS_WARNING=$?
 
-      if [ ${CRITICAL} -ne ${CRITICAL_INVERTED} ]; then
+      if [ ${IS_CRITICAL} -ne ${CRITICAL_INVERTED} ]; then
         NAGIOS_STATUS=CRITICAL
         NAGIOS_SHORT_TEXT="${METRIC_NAME} is ${PROMETHEUS_RESULT}"
-      elif [ ${WARNING} -ne ${WARNING_INVERTED} ]; then
+      elif [ ${IS_WARNING} -ne ${WARNING_INVERTED} ]; then
         NAGIOS_STATUS=WARNING
         NAGIOS_SHORT_TEXT="${METRIC_NAME} is ${PROMETHEUS_RESULT}"
       else
