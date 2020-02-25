@@ -34,7 +34,7 @@ function usage() {
     # Check thread count is between 15-25, warning if outside this interval.
 
   Dependencies:
-    Requires bash, command, curl, cut, echo, grep, jq and sed to be in $PATH.
+    Requires bash, curl, cut, echo, grep, jq and sed to be in $PATH.
 
 EoL
 }

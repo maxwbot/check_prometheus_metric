@@ -40,12 +40,15 @@ Nagios plugin for alerting on Prometheus query results.
     # Check thread count is between 15-25, warning if outside this interval.
 
   Dependencies:
-    Requires bash, command, curl, cut, echo, grep, jq and sed to be in $PATH.
+    Requires bash, curl, cut, echo, grep, jq and sed to be in $PATH.
 ```
 Note: `nagios-interval` refers to [this syntax](http://nagios-plugins.org/doc/guidelines.html#THRESHOLDFORMAT)
 
 # Icinga configuration
-You need to add the following to your Icinga2 configuration to use it:
+To utilize the script with [Icinga 2](https://icinga.com/docs/icinga2/), four
+steps must be taken;
+
+1. The CheckCommand definition must be added to `/etc/icinga2/conf.d/check_prometheus_metric.conf`:
 ```
 object CheckCommand "check_prometheus_metric" {
   import "plugin-check-command"
@@ -74,13 +77,32 @@ object CheckCommand "check_prometheus_metric" {
         }
     }
 }
+```
+2. The checking script, must be added to `/usr/lib/nagios/plugins/check_prometheus_metric`:
+```
+GIT_REPO=https://github.com/magenta-aps/check_prometheus_metric
+VERSION=$(curl -sL -H "Accept: application/json" ${GIT_REPO}/releases/latest | jq -r .tag_name)
+curl -sL -o . ${GIT_REPO}/releases/download/${VERSION}/check_prometheus_metric.sh
+chmod +x check_prometheus_metric.sh
+sudo mv check_prometheus_metric.sh /usr/lib/nagios/plugins/check_prometheus_metric
+```
 
+3. Install the required software to run the script:
+```
+sudo apt-get update
+sudo apt-get install -y bash coreutils curl grep jq sed
+```
+
+4. Add Service definitions for whatever is to be monitored:
+
+`/etc/icinga2/conf.d/check_pi_service.conf`:
+```
 apply Service "pi" {
   import "generic-service"
 
   check_command = "check_prometheus_metric"
 
-  vars.check_prometheus_metric_url = "nagios_plugins_prometheus:9090"
+  vars.check_prometheus_metric_url = "prometheus:9090"
   vars.check_prometheus_metric_query = "pi"
   vars.check_prometheus_metric_warning = "3:4"
   vars.check_prometheus_metric_critical = "1:6"
@@ -90,7 +112,6 @@ apply Service "pi" {
   assign where host.name == NodeName
 }
 ```
-And add the script to `/usr/lib/nagios/plugins/check_prometheus_metric`.
 
 # Nagios configuration
 You need to add the following commands to your Nagios configuration to use it:
@@ -98,18 +119,5 @@ You need to add the following commands to your Nagios configuration to use it:
 define command {
     command_name check_prometheus
     command_line $USER1$/check_prometheus_metric.sh -H '$ARG1$' -q '$ARG2$' -w '$ARG3$' -c '$ARG4$' -n '$ARG5$' -m '$ARG6$'
-}
-
-# check_prometheus, treating a NaN result as ok
-define command {
-    command_name check_prometheus_nan_ok
-    command_line $USER1$/check_prometheus_metric.sh -H '$ARG1$' -q '$ARG2$' -w '$ARG3$' -c '$ARG4$' -n '$ARG5$' -m '$ARG6$' -O
-}
-
-# check_prometheus, the first element of the vector is used for the check,
-# printing the extra metric information into the Nagios message
-define command {
-    command_name check_prometheus_extra_info
-    command_line $USER1$/check_prometheus_metric.sh -H '$ARG1$' -q '$ARG2$' -w '$ARG3$' -c '$ARG4$' -n '$ARG5$' -m '$ARG6$' -i -t vector
 }
 ```

@@ -1,6 +1,5 @@
 #!/usr/bin/env bats
 
-load ../test_config
 load ../test_utils
 
 @test "--- ${BATS_TEST_FILENAME} ---" {

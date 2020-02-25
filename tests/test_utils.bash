@@ -1,5 +1,3 @@
-source tests/test_config.bash
-
 function test_parameters_full() {
     local _PARAMETERS
     local _OUTPUT
@@ -122,7 +120,6 @@ function start_icinga() {
     echo "Fetching API password..."
     PASSWORD=$(docker exec icinga /bin/bash -c "cat /etc/icinga2/conf.d/api-users.conf | grep -o 'password = .*'| cut -f2 -d '\"'")
     echo "${PASSWORD}" 
-    echo "ICINGA_PASSWORD=${PASSWORD}" >> tests/test_config.bash
     export "ICINGA_PASSWORD=${PASSWORD}"
 
     echo "Wait for icinga to be online..."

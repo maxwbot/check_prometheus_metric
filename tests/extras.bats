@@ -1,6 +1,5 @@
 #!/usr/bin/env bats
 
-load test_config
 PROMETHEUS_SERVER=http://localhost:${PROMETHEUS_PORT}
 QUERY_SCALAR_UP="scalar(up{instance=\"localhost:9090\"})"
 QUERY_VECTOR_UP="vector(up{instance=\"localhost:9090\"})"

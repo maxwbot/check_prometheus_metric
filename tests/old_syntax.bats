@@ -1,6 +1,5 @@
 #!/usr/bin/env bats
 
-load test_config
 PROMETHEUS_SERVER=http://localhost:${PROMETHEUS_PORT}
 
 load test_utils
