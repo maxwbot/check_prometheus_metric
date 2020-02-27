@@ -73,7 +73,7 @@ object CheckCommand "check_prometheus_metric" {
         }
         "-n" = {
                 value = "$check_prometheus_metric_name$"
-                description = "A name for the mtric being checked."
+                description = "A name for the metric being checked."
         }
     }
 }
