@@ -1,0 +1,31 @@
+0.0.4
+=====
+Added CHANGELOG
+Added logo in README.md
+Added configuration documentation to README.md
+Added additional preflight check for validation prometheus server connection.
+Added test case against icinga itself.
+Fixed a typo in the README.md file
+Fixed bug causing wrong exit code for WARNING/CRITICAL returns
+
+0.0.3
+=====
+Rework plugin to new structure.
+
+Added nagios-interval syntax support
+Added bats testing framework
+- Added tests for current (old) behavior and syntax.
+- Added tests for new behavior and syntax.
+Autodetect vector / scalar query types based on query result.
+Check intervals using jq instead of test -v
+Support floats instead of integers all around.
+Utilize epsilon instead of 1 for old syntax.
+Added CI testing and release management.
+
+0.0.2
+=====
+Rework project structure
+
+0.0.1
+=====
+Created release workflow
