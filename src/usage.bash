@@ -3,7 +3,7 @@ function usage() {
   cat <<'EoL'
 
   check_prometheus_metric.sh - Nagios plugin for checking Prometheus metrics.
-  
+
   Usage:
     check_prometheus_metric.sh -H HOST -q QUERY -w FLOAT[:FLOAT] -c FLOAT[:FLOAT]
                                -n NAME [-m METHOD] [-O] [-i] [-p]
@@ -16,7 +16,7 @@ function usage() {
     -n NAME          A name for the metric being checked.
     -m METHOD        Comparison method, one of gt, ge, lt, le, eq, ne.
                      (Defaults to ge unless otherwise specified).
-    -C CURL_OPTS     Additional flags to curl. Can be passed multiple times. 
+    -C CURL_OPTS     Additional flags to curl. Can be passed multiple times.
                      Options and option values must be passed separately.
                      e.g. -C --connect-timeout -C 10 -C --cacert -C /path/to/ca.crt
     -O               Accept NaN as an "OK" result.
@@ -26,7 +26,7 @@ function usage() {
   Examples:
     check_prometheus_metric -q 'up{job=\"job_name\"}' -w :1 -c :1
     # Check that job is up. If not, critical.
-    
+
     check_prometheus_metric -q 'node_load1' -w :0.05 -c :0.1
     # Check load is below 0.05 (warning) and 0.1 (critical).
 

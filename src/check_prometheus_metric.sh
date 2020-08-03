@@ -92,7 +92,7 @@ function process_command_line {
       p)        PERFDATA="true"
                 ;;
 
-      t)        
+      t)
                 NAGIOS_LONG_TEXT+="Note: The use of -t is deprecated, as the query-type is derived from the query result."
                 ;;
 
@@ -196,7 +196,7 @@ function check_prometheus_server {
     PROMETHEUS_OK=$?
     if [ "${PROMETHEUS_OK}" -ne 0 ]; then
         NAGIOS_STATUS=UNKNOWN
-        NAGIOS_SHORT_TEXT="unable to query proemtheus endpoint!"
+        NAGIOS_SHORT_TEXT="unable to query prometheus endpoint!"
         exit
     fi
 }
@@ -221,7 +221,7 @@ function get_prometheus_scalar_result {
   case "${_RESULT}" in
     +Inf) printf '%s' 'inf'
           ;;
-    -Inf) printf '%s' '-inf' 
+    -Inf) printf '%s' '-inf'
           ;;
     *)    printf '%s' "${_RESULT}" # otherwise return as a string
           ;;
@@ -284,7 +284,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
     else
         PROMETHEUS_VALUE=$( get_prometheus_vector_value "$PROMETHEUS_RAW_RESULT" )
         PROMETHEUS_RESULT=$( get_prometheus_scalar_result "$PROMETHEUS_VALUE" )
-        PROMETHEUS_METRIC=$( get_prometheus_vector_metric "$PROMETHEUS_RAW_RESULT" ) 
+        PROMETHEUS_METRIC=$( get_prometheus_vector_metric "$PROMETHEUS_RAW_RESULT" )
     fi
 
     # check the value
@@ -310,7 +310,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
       if [[ "${NAN_OK}" = "true" && "${PROMETHEUS_RESULT}" = "NaN" ]]; then
         NAGIOS_STATUS=OK
         NAGIOS_SHORT_TEXT="${METRIC_NAME} is ${PROMETHEUS_RESULT}"
-      else    
+      else
         NAGIOS_SHORT_TEXT="unable to parse prometheus response"
         NAGIOS_LONG_TEXT="${METRIC_NAME} is ${PROMETHEUS_RESULT}"
       fi
