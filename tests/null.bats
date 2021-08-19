@@ -24,5 +24,5 @@ load test_utils
 }
 @test "Test -q topk(1,hopefully_this_never_matches) -w 2 -c 3 -O" {
   OUTPUT="$(test_parameters '-q topk(1,hopefully_this_never_matches) -w 2 -c 3 -O')"
-  [ "${OUTPUT}" == "OK - tc is empty" ]
+  [ "${OUTPUT}" == "UNKNOWN - unable to parse prometheus response" ]
 }

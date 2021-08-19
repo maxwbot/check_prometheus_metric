@@ -152,17 +152,17 @@ load test_utils
 }
 
 # Scalar autodetected
-@test "Test -q 1 -w 2 -c 3" {
+@test "Test auto -q 1 -w 2 -c 3" {
   OUTPUT="$(test_parameters '-q 1 -w 2 -c 3')"
   [ "${OUTPUT}" == "OK - tc is 1" ]
 }
-@test "Test -q 1 -w 2 -c 3 -t vector" {
+@test "Test auto -q 1 -w 2 -c 3 -t vector" {
   FULL_OUTPUT="$(test_parameters_full '-q 1 -w 2 -c 3 -t vector')"
   OUTPUT=$(echo "${FULL_OUTPUT}" | tail -1)
   WARNING=$(echo "${FULL_OUTPUT}" | head -1)
   [ "${OUTPUT}" == "OK - tc is 1" ] && [ "${WARNING}" == "${T_DEPRECATED}" ]
 }
-@test "Test -q 1 -w 2 -c 3 -t scalar" {
+@test "Test auto -q 1 -w 2 -c 3 -t scalar" {
   FULL_OUTPUT="$(test_parameters_full '-q 1 -w 2 -c 3 -t scalar')"
   OUTPUT=$(echo "${FULL_OUTPUT}" | tail -1)
   WARNING=$(echo "${FULL_OUTPUT}" | head -1)
