@@ -294,7 +294,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 
     # check the value
     if is_float ${PROMETHEUS_RESULT}; then
-      JSON=$(echo "${LEVEL_JSON} {\"value\": ${PROMETHEUS_RESULT}}" | jq -s add)
+      JSON=$(echo "${LEVEL_JSON} {\"value\": ${PROMETHEUS_RESULT}}" | jq -s add | sed 's/DBL_MAX/99999999999999999999999999.9999/g')
       # Evaluate critical and warning levels
       echo "${JSON}" | jq -e ".critical_low <= .value and .value <= .critical_high" >/dev/null
       IS_CRITICAL=$?
